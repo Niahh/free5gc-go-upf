@@ -79,6 +79,7 @@ func NewDriver(wg *sync.WaitGroup, cfg *factory.Config) (Driver, error) {
 			return nil, errors.Wrap(err, "open Gtp5g")
 		}
 
+		driver.iptables = NewIptablesManager()
 		link := driver.Link()
 		for _, dnn := range cfg.DnnList {
 			_, dst, err := net.ParseCIDR(dnn.Cidr)
@@ -90,6 +91,19 @@ func NewDriver(wg *sync.WaitGroup, cfg *factory.Config) (Driver, error) {
 			if err != nil {
 				driver.Close()
 				return nil, err
+			}
+			if dnn.NatIfName != "" || dnn.NatIfCIDR != "" {
+				err = driver.iptables.AddDNNRules(
+					dnn.Cidr,
+					dnn.NatIfName,
+					dnn.NatIfCIDR,
+					dnn.IPForwardEnable,
+					dnn.TCPMss,
+				)
+				if err != nil {
+					driver.Close()
+					return nil, err
+				}
 			}
 		}
 		return driver, nil
