@@ -39,7 +39,6 @@ type Gtp5g struct {
 	psClient *gtp5gnl.Client
 	bsnl     *buffnetlink.Server
 	ps       *perio.Server
-	iptables *IptablesManager
 	log      *logrus.Entry
 }
 
@@ -122,11 +121,6 @@ func OpenGtp5g(wg *sync.WaitGroup, addr string, mtu uint32) (*Gtp5g, error) {
 }
 
 func (g *Gtp5g) Close() {
-	if g.iptables != nil {
-		for _, err := range g.iptables.Cleanup() {
-			logger.MainLog.Warnf("iptables cleanup err: %+v", err)
-		}
-	}
 	if g.conn != nil {
 		g.conn.Close()
 	}
