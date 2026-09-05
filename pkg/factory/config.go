@@ -49,7 +49,7 @@ type DnnList struct {
 	Cidr            string `yaml:"cidr"            valid:"required,cidr"`
 	NatIfName       string `yaml:"natifname"       valid:"optional"`
 	NatIfCIDR       string `yaml:"natIfCIDR"       valid:"optional,cidr"`
-	IPForwardEnable bool   `yaml:"ipForwardEnable" valid:"required"`
+	IPForwardEnable bool   `yaml:"ipForwardEnable" valid:"optional"`
 	TCPMss          uint16 `yaml:"tcpMss"          valid:"optional"`
 }
 
